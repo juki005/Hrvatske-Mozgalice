@@ -1,0 +1,96 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Lora", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  
+  --color-brand-bg: #FFFFFF;
+  --color-brand-card: #FBF9F4;
+  --color-brand-text: #121212;
+  --color-brand-muted: #757575;
+  --color-brand-gold: #F1C40F;
+  --color-brand-red: #A62639;
+
+  --color-nyt-bg: #FFFFFF;
+  --color-nyt-card: #FBF9F4;
+  --color-nyt-border: #E3E3E1;
+  --color-nyt-text: #121212;
+  --color-nyt-gold: #F1C40F;
+  --color-nyt-midnight: #121212;
+  
+  --color-difficulty-0: #F9DF6D;
+  --color-difficulty-1: #A0C35A;
+  --color-difficulty-2: #B0C4EF;
+  --color-difficulty-3: #BA81C5;
+
+  --color-strands-theme: #A7C5EB;
+  --color-strands-spangram: #F9DF6D;
+  --color-sudoku-accent: #E86A33;
+
+  --animate-shake: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+@keyframes shake {
+  10%, 90% { transform: translate3d(-1px, 0, 0); }
+  20%, 80% { transform: translate3d(2px, 0, 0); }
+  30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+  40%, 60% { transform: translate3d(4px, 0, 0); }
+}
+
+body {
+  background-color: #FBF9F4;
+  color: var(--color-brand-text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Smooth page transitions */
+.page-enter {
+  opacity: 0;
+  transform: translateY(10px);
+}
+.page-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 400ms ease-out, transform 400ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.page-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+.page-exit-active {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 300ms ease-in, transform 300ms ease-in;
+}
+
+/* Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #E3E3E1;
+  border-radius: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #757575;
+}
+
+/* Prevent double-tap zoom on game elements */
+.touch-none, 
+.grid, 
+button, 
+input {
+  touch-action: manipulation;
+}
+
+/* Ensure touch targets are accessible */
+button, 
+.cursor-pointer {
+  min-width: 44px;
+  min-height: 44px;
+}

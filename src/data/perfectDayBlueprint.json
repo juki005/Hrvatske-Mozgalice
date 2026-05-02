@@ -1,0 +1,99 @@
+{
+  "metadata": {
+    "date": "2026-04-05",
+    "author": "Križaljkaški tim",
+    "edition": "Perfect Day #1",
+    "difficulty": "Expert",
+    "timeLimit": 3600
+  },
+  "games": {
+    "krizaljka": {
+      "type": "crossword",
+      "size": 7,
+      "rules": {
+        "symmetry": "180-degree rotational",
+        "minWordLength": 3,
+        "noRepetition": true,
+        "intersection": true
+      },
+      "grid": [
+        ["S", "A", "T", ".", "B", "O", "T"],
+        ["I", "M", "E", ".", "O", "K", "O"],
+        ["R", "A", "D", "N", "I", "C", "I"],
+        [".", ".", "N", "O", "V", "I", "."],
+        ["M", "I", "R", "N", "I", "J", "I"],
+        ["O", "K", "O", ".", "I", "M", "E"],
+        ["S", "A", "T", ".", "B", "O", "T"]
+      ],
+      "clues": {
+        "across": [
+          { "no": 1, "text": "Pokazivač prolaznosti", "answer": "SAT" },
+          { "no": 4, "text": "Digitalni radnik", "answer": "BOT" },
+          { "no": 7, "text": "Ono na što se odazivaš", "answer": "IME" },
+          { "no": 8, "text": "Kamera prirode", "answer": "OKO" },
+          { "no": 9, "text": "Oni koji grade svijet", "answer": "RADNICI" },
+          { "no": 10, "text": "Svježi ispod čekića", "answer": "NOVI" },
+          { "no": 11, "text": "Oni koji ne talasaju", "answer": "MIRNIJI" },
+          { "no": 13, "text": "Kamera prirode (obrnuto)", "answer": "OKO" },
+          { "no": 14, "text": "Ono na što se odazivaš (obrnuto)", "answer": "IME" },
+          { "no": 15, "text": "Pokazivač prolaznosti (obrnuto)", "answer": "SAT" },
+          { "no": 16, "text": "Digitalni radnik (obrnuto)", "answer": "BOT" }
+        ],
+        "down": [
+          { "no": 1, "text": "Mišja poslastica", "answer": "SIR" },
+          { "no": 2, "text": "Žensko ime, palindrom", "answer": "AMA" },
+          { "no": 3, "text": "Sedam dana", "answer": "TJEDAN" },
+          { "no": 4, "text": "Ono što slikar miješa", "answer": "BOJA" },
+          { "no": 5, "text": "Mala oka", "answer": "OKCI" },
+          { "no": 6, "text": "Prijenosni WC (sleng)", "answer": "TOI" },
+          { "no": 10, "text": "Vrijeme za spavanje", "answer": "NOC" },
+          { "no": 11, "text": "Pripada meni", "answer": "MOS" },
+          { "no": 12, "text": "Istarski gradić", "answer": "IKA" }
+        ]
+      }
+    },
+    "poveznice": {
+      "type": "connections",
+      "categories": [
+        {
+          "tier": "Yellow",
+          "description": "Straightforward categories",
+          "theme": "VRSTE KAVE",
+          "words": ["ESPRESSO", "MACCHIATO", "CAPPUCCINO", "LATTE"]
+        },
+        {
+          "tier": "Green",
+          "description": "Shared associations",
+          "theme": "DIJELOVI BRODA",
+          "words": ["PRAMAC", "KRMA", "PALUBA", "JARBOL"]
+        },
+        {
+          "tier": "Blue",
+          "description": "Compound words",
+          "theme": "ZAVRŠAVA NA 'GRAD'",
+          "words": ["BEOGRAD", "ZAGREB", "NOVIGRAD", "BIOGRAD"]
+        },
+        {
+          "tier": "Purple",
+          "description": "Wordplay, meta-references",
+          "theme": "RIJEČI KOJE SLIJEDE 'BELI'",
+          "words": ["MANASTIR", "ZAGREB", "ORRA", "KROV"]
+        }
+      ]
+    },
+    "pcelica": {
+      "type": "spelling-bee",
+      "rules": {
+        "centerLetterRequired": true,
+        "pangramGuarantee": true,
+        "validNounsOnly": true
+      },
+      "centerLetter": "A",
+      "outerLetters": ["K", "R", "O", "V", "N", "I"],
+      "pangram": "KROVINA",
+      "validWords": [
+        "KROVINA", "KRAVA", "RANA", "NARA", "KORAK", "ROKA", "VARA", "NOVINA", "RAVNA", "KVAR", "KAVA", "NARAV"
+      ]
+    }
+  }
+}
