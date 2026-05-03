@@ -2,14 +2,17 @@ import React, { useState } from 'react';
 import { Menu, User, Calendar, Grid, Archive, Flame, Clock, CheckCircle2 } from 'lucide-react';
 import Sidebar from './Sidebar';
 import ProfileMenu from './ProfileMenu';
+import LoginModal from './auth/LoginModal';
 import { useDailyStats } from '../hooks/useDailyStats';
 import { useGameContext } from '../context/GameContext';
+import { useAuth } from '../context/AuthContext';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const { streakData, timeLeft, completedCount, totalGames } = useDailyStats();
   const { setActiveGame } = useGameContext();
+  const { user, isAuthModalOpen, setIsAuthModalOpen } = useAuth();
 
   return (
     <div className="min-h-screen bg-[#FBF9F4] text-brand-text flex flex-col font-sans">
@@ -64,16 +67,27 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </div>
           
           <button 
-            onClick={() => setIsProfileOpen(!isProfileOpen)}
-            className="p-2 hover:bg-gray-100 rounded-xl transition-colors relative bg-gray-50 border border-gray-100"
+            onClick={() => user ? setIsProfileOpen(!isProfileOpen) : setIsAuthModalOpen(true)}
+            className="p-1 sm:p-2 hover:bg-gray-100 rounded-xl transition-all relative bg-gray-50 border border-gray-100 flex items-center gap-2 group"
           >
-            <User className="w-5 h-5" />
+            {user?.photoURL ? (
+              <img src={user.photoURL} alt="Avatar" className="w-6 h-6 sm:w-8 sm:h-8 rounded-lg shadow-sm" />
+            ) : (
+              <User className="w-5 h-5" />
+            )}
+            {user && (
+              <span className="hidden lg:block text-xs font-bold pr-2">{user.displayName}</span>
+            )}
+            {!user && (
+              <span className="hidden sm:block text-[10px] font-black uppercase tracking-widest px-1 text-brand-muted group-hover:text-brand-text">Prijava</span>
+            )}
           </button>
         </div>
       </header>
 
       <ProfileMenu isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} />
       <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+      <LoginModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
 
       {/* Main Content */}
       <main className="flex-1 relative pb-20 sm:pb-0 pt-6 sm:pt-8">

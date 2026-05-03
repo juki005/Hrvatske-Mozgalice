@@ -3,8 +3,10 @@ import { AnimatePresence, motion } from 'motion/react';
 import Layout from './components/Layout';
 import GameHub from './components/GameHub';
 import { GameProvider, useGameContext } from './context/GameContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { DifficultyProvider, useDifficulty, Difficulty } from './context/DifficultyContext';
 import DifficultyModal from './components/DifficultyModal';
+import LoginModal from './components/auth/LoginModal';
 import Poveznice from './components/Poveznice';
 import CrosswordGrid from './components/CrosswordGrid';
 import StrandsGrid from './components/StrandsGrid';
@@ -24,6 +26,7 @@ import { dailyData } from './data/poveznice';
 
 function AppContent() {
   const { activeGame, setActiveGame } = useGameContext();
+  const { user, isAdmin, isAuthModalOpen, setIsAuthModalOpen, loading } = useAuth();
   const [selectedGameForDifficulty, setSelectedGameForDifficulty] = useState<string | null>(null);
   const { difficulty, setDifficulty } = useDifficulty();
 
@@ -34,6 +37,10 @@ function AppContent() {
 
   const handleSelectGame = (gameId: string) => {
     if (gameId === 'admin') {
+      if (!isAdmin) {
+        setIsAuthModalOpen(true);
+        return;
+      }
       setActiveGame('admin');
     } else {
       setSelectedGameForDifficulty(gameId);
@@ -69,6 +76,26 @@ function AppContent() {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-brand-bg flex flex-col items-center justify-center p-6 text-center">
+        <motion.div
+          animate={{ 
+            rotate: 360,
+            scale: [1, 1.1, 1],
+          }}
+          transition={{ 
+            rotate: { duration: 2, repeat: Infinity, ease: "linear" },
+            scale: { duration: 1, repeat: Infinity, ease: "easeInOut" }
+          }}
+          className="w-16 h-16 border-4 border-brand-text border-t-transparent rounded-full mb-6"
+        />
+        <h2 className="font-serif text-2xl font-black text-[#2D2D2D] mb-2">Hrvatske Mozgalice</h2>
+        <p className="text-brand-muted font-bold uppercase tracking-[0.2em] text-xs">Učitavanje tvojih izazova...</p>
+      </div>
+    );
+  }
+
   return (
     <Layout>
       <AnimatePresence mode="wait">
@@ -103,16 +130,23 @@ function AppContent() {
         onClose={() => setSelectedGameForDifficulty(null)}
         onSelect={handleDifficultySelect}
       />
+
+      <LoginModal 
+        isOpen={isAuthModalOpen} 
+        onClose={() => setIsAuthModalOpen(false)} 
+      />
     </Layout>
   );
 }
 
 export default function App() {
   return (
-    <GameProvider>
-      <DifficultyProvider>
-        <AppContent />
-      </DifficultyProvider>
-    </GameProvider>
+    <AuthProvider>
+      <GameProvider>
+        <DifficultyProvider>
+          <AppContent />
+        </DifficultyProvider>
+      </GameProvider>
+    </AuthProvider>
   );
 }
