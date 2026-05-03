@@ -9,7 +9,7 @@ import {
   updateProfile,
   User as FirebaseUser 
 } from 'firebase/auth';
-import { auth } from '../lib/firebase';
+import { auth } from '../firebase';
 
 export type UserRole = 'user' | 'admin';
 
@@ -57,7 +57,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // 2. Real Firebase Auth Observer
     // This is the ONLY source of truth for the user session.
+    let authTimer: NodeJS.Timeout;
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser: FirebaseUser | null) => {
+      if (authTimer) clearTimeout(authTimer);
+
       if (firebaseUser) {
         // Map Firebase User to our App User model
         const role: UserRole = ADMIN_EMAILS.includes(firebaseUser.email || '') ? 'admin' : 'user';
@@ -71,10 +74,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       } else {
         setUser(null);
       }
-      setLoading(false);
+      
+      // Small delay to ensure auth state is fully settled before switching views
+      // This prevents the UI from "flickering" between loading and content states
+      authTimer = setTimeout(() => {
+        setLoading(false);
+      }, 350);
     });
 
-    return () => unsubscribe();
+    return () => {
+      unsubscribe();
+      if (authTimer) clearTimeout(authTimer);
+    };
   }, []);
 
   const login = async (email: string, password: string) => {

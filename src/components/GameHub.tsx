@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
 import { CheckCircle2, Heart, Shield, ArrowRight } from 'lucide-react';
 import { useGameContext } from '../context/GameContext';
 import { useDailyStats } from '../hooks/useDailyStats';
@@ -16,33 +15,9 @@ export default function GameHub({ onSelectGame }: GameHubProps) {
   const { user, isAdmin, setIsAuthModalOpen } = useAuth();
   const { completedCount, totalGames } = useDailyStats();
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        type: "spring",
-        damping: 25,
-        stiffness: 400
-      }
-    }
-  };
-
   const GameCard = ({ id, title, subtitle, icon: Icon, colorClass, isFeatured = false }: any) => {
     const isCompleted = isGameCompleted(id);
     const [isFavorited, setIsFavorited] = useState(false);
-    const [showHeartAnim, setShowHeartAnim] = useState(false);
 
     const handleHeartClick = (e: React.MouseEvent) => {
       e.stopPropagation();
@@ -51,23 +26,16 @@ export default function GameHub({ onSelectGame }: GameHubProps) {
         return;
       }
       setIsFavorited(!isFavorited);
-      if (!isFavorited) {
-        setShowHeartAnim(true);
-        setTimeout(() => setShowHeartAnim(false), 1000);
-      }
     };
 
     return (
-      <motion.div
-        variants={itemVariants}
-        whileHover={{ scale: 1.02, y: -5 }}
-        whileTap={{ scale: 0.98 }}
+      <div
         onClick={() => onSelectGame(id)}
         className={`
-          group relative overflow-hidden cursor-pointer transition-all duration-500
-          rounded-[2rem] border border-nyt-border shadow-md hover:shadow-xl
+          group relative overflow-hidden cursor-pointer transition-all duration-300
+          rounded-[2rem] border border-nyt-border shadow-sm hover:shadow-md hover:-translate-y-1 active:scale-[0.99]
           bg-white p-6 sm:p-8 flex flex-col h-full
-          ${isFeatured ? 'col-span-1 md:col-span-2 lg:col-span-3 min-h-[220px]' : 'min-h-[180px]'}
+          ${isFeatured ? 'col-span-1 md:col-span-2 lg:col-span-3 min-h-[200px]' : 'min-h-[160px]'}
           ${isCompleted ? 'bg-green-50/20 border-green-100' : ''}
         `}
       >
@@ -77,19 +45,6 @@ export default function GameHub({ onSelectGame }: GameHubProps) {
           className={`absolute top-6 right-6 p-2 rounded-full z-20 transition-all ${isFavorited ? 'bg-red-50 text-brand-red' : 'bg-gray-50 text-brand-muted hover:bg-gray-100'}`}
         >
           <Heart className={`w-5 h-5 ${isFavorited ? 'fill-current' : ''}`} />
-          
-          <AnimatePresence>
-            {showHeartAnim && (
-              <motion.div
-                initial={{ scale: 0, opacity: 1, y: 0 }}
-                animate={{ scale: 2, opacity: 0, y: -20 }}
-                exit={{ opacity: 0 }}
-                className="absolute inset-0 flex items-center justify-center pointer-events-none"
-              >
-                <Heart className="w-5 h-5 fill-brand-red text-brand-red" />
-              </motion.div>
-            )}
-          </AnimatePresence>
         </button>
 
         {/* Content */}
@@ -124,17 +79,12 @@ export default function GameHub({ onSelectGame }: GameHubProps) {
 
         {/* Hidden decorative icon */}
         <Icon className="absolute -bottom-8 -right-8 w-48 h-48 opacity-[0.03] rotate-12 group-hover:scale-110 transition-transform duration-700 pointer-events-none" />
-      </motion.div>
+      </div>
     );
   };
 
   return (
-    <motion.div 
-      initial="hidden"
-      animate="visible"
-      variants={containerVariants}
-      className="max-w-7xl mx-auto px-6 md:px-12 py-12 w-full"
-    >
+    <div className="max-w-7xl mx-auto px-6 md:px-12 py-12 w-full">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6">
         <div>
           <h2 className="text-4xl font-serif font-black text-[#2D2D2D] mb-1">Mozgalice za danas</h2>
@@ -161,20 +111,18 @@ export default function GameHub({ onSelectGame }: GameHubProps) {
           </div>
 
           {isAdmin && (
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+            <button
               onClick={() => onSelectGame('admin')}
-              className="px-6 py-4 bg-gradient-to-tr from-purple-600 to-indigo-600 text-white rounded-2xl font-bold flex items-center gap-2 shadow-lg shadow-purple-200"
+              className="px-6 py-4 bg-gradient-to-tr from-purple-600 to-indigo-600 text-white rounded-2xl font-bold flex items-center gap-2 shadow-lg shadow-purple-200 hover:scale-105 active:scale-95 transition-transform"
             >
               <Shield className="w-5 h-5" />
               <span>Admin Panel</span>
-            </motion.button>
+            </button>
           )}
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 min-h-[600px]">
         {GAMES.map((game) => (
           <GameCard
             key={game.id}
@@ -182,6 +130,6 @@ export default function GameHub({ onSelectGame }: GameHubProps) {
           />
         ))}
       </div>
-    </motion.div>
+    </div>
   );
 }

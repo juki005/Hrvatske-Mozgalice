@@ -76,54 +76,44 @@ function AppContent() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-brand-bg flex flex-col items-center justify-center p-6 text-center">
-        <motion.div
-          animate={{ 
-            rotate: 360,
-            scale: [1, 1.1, 1],
-          }}
-          transition={{ 
-            rotate: { duration: 2, repeat: Infinity, ease: "linear" },
-            scale: { duration: 1, repeat: Infinity, ease: "easeInOut" }
-          }}
-          className="w-16 h-16 border-4 border-brand-text border-t-transparent rounded-full mb-6"
-        />
-        <h2 className="font-serif text-2xl font-black text-[#2D2D2D] mb-2">Hrvatske Mozgalice</h2>
-        <p className="text-brand-muted font-bold uppercase tracking-[0.2em] text-xs">Učitavanje tvojih izazova...</p>
-      </div>
-    );
-  }
-
   return (
-    <Layout>
-      <AnimatePresence mode="wait">
-        {!activeGame ? (
-          <motion.div key="dashboard" className="w-full flex flex-col">
-            <GameHub onSelectGame={handleSelectGame} />
-          </motion.div>
-        ) : (
-          <motion.div
-            layoutId={`game-card-${activeGame}`}
-            key="game-view"
-            initial={{ opacity: 0, scale: 0.98, y: 10 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.98, y: -10 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="w-full flex flex-col bg-brand-bg z-10"
-          >
-            {activeGame === 'admin' && (
-              <div className="p-4">
-                <button onClick={handleBack} className="mb-4 text-brand-text font-bold hover:underline">
-                  &larr; Natrag na igre
-                </button>
+    <div className="min-h-screen flex flex-col bg-[#FBF9F4]">
+      <Layout>
+        <div className="relative flex-1 flex flex-col">
+          {loading ? (
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#FBF9F4] z-20 px-6 py-20">
+              <div className="flex flex-col items-center gap-6 max-w-sm w-full">
+                <div className="w-12 h-12 border-[4px] border-brand-red border-t-transparent rounded-full animate-spin" />
+                <div className="text-center">
+                  <h2 className="font-serif text-2xl font-black text-brand-text mb-2">Hrvatske Mozgalice</h2>
+                  <div className="flex items-center justify-center gap-2 h-4">
+                    <span className="w-1.5 h-1.5 bg-brand-red rounded-full animate-pulse" />
+                    <span className="w-1.5 h-1.5 bg-brand-red rounded-full animate-pulse" style={{ animationDelay: '150ms' }} />
+                    <span className="w-1.5 h-1.5 bg-brand-red rounded-full animate-pulse" style={{ animationDelay: '300ms' }} />
+                  </div>
+                </div>
               </div>
-            )}
-            {renderGame()}
-          </motion.div>
-        )}
-      </AnimatePresence>
+            </div>
+          ) : (
+            <div className="w-full flex-1 flex flex-col transition-opacity duration-300 ease-out opacity-100">
+              {!activeGame ? (
+                <GameHub onSelectGame={handleSelectGame} />
+              ) : (
+                <div className="bg-brand-bg flex-1" key={activeGame}>
+                  {activeGame === 'admin' && (
+                    <div className="p-4">
+                      <button onClick={handleBack} className="mb-4 text-brand-text font-bold hover:underline">
+                        &larr; Natrag na igre
+                      </button>
+                    </div>
+                  )}
+                  {renderGame()}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </Layout>
 
       <DifficultyModal 
         isOpen={!!selectedGameForDifficulty} 
@@ -135,7 +125,7 @@ function AppContent() {
         isOpen={isAuthModalOpen} 
         onClose={() => setIsAuthModalOpen(false)} 
       />
-    </Layout>
+    </div>
   );
 }
 
