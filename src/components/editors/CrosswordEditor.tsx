@@ -30,9 +30,9 @@ export default function CrosswordEditor() {
       if (data && data.grid && Array.isArray(data.grid)) {
         setGrid(data.grid);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("AI Generation Error:", error);
-      alert("Došlo je do pogreške prilikom generiranja.");
+      alert(error.message || "Došlo je do pogreške prilikom generiranja.");
     } finally {
       setIsGenerating(false);
     }

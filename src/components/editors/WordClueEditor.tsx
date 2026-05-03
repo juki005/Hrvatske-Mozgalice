@@ -30,9 +30,9 @@ export default function WordClueEditor({ title, hasClues = false }: { title: str
       if (Array.isArray(data)) {
         setItems(prev => [...prev.filter(item => item.word !== ''), ...data]);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("AI Generation Error:", error);
-      alert("Došlo je do pogreške prilikom generiranja.");
+      alert(error.message || "Došlo je do pogreške prilikom generiranja.");
     } finally {
       setIsGenerating(false);
     }

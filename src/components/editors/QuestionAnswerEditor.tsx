@@ -33,9 +33,9 @@ export default function QuestionAnswerEditor({ title }: { title: string }) {
       if (Array.isArray(data)) {
         setQuestions(prev => [...prev, ...data]);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("AI Generation Error:", error);
-      alert("Došlo je do pogreške prilikom generiranja.");
+      alert(error.message || "Došlo je do pogreške prilikom generiranja.");
     } finally {
       setIsGenerating(false);
     }

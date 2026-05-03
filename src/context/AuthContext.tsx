@@ -57,44 +57,39 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     cleanLegacyData();
 
     // 2. Real Firebase Auth Observer
-    // This is the ONLY source of truth for the user session.
-    let authTimer: NodeJS.Timeout;
+    console.log("Setting up Auth Observer...");
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser: FirebaseUser | null) => {
-      if (authTimer) clearTimeout(authTimer);
-
+      console.log("onAuthStateChanged triggered. Firebase User:", firebaseUser);
+      
       if (firebaseUser) {
-        // Map Firebase User to our App User model
-        const isAdmin = firebaseUser.email === 'imladinovich@gmail.com';
-        const role: UserRole = isAdmin ? 'admin' : 'user';
-        
+        console.log("Authenticated User Email:", firebaseUser.email);
+        const isAdminUser = firebaseUser.email === 'imladinovich@gmail.com';
         setUser({
           uid: firebaseUser.uid,
           email: firebaseUser.email || '',
           displayName: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'Igrač',
           photoURL: firebaseUser.photoURL || undefined,
-          role,
-          isAdmin
+          role: isAdminUser ? 'admin' : 'user',
+          isAdmin: isAdminUser
         });
       } else {
+        console.log("User is guest (null)");
         setUser(null);
       }
-      
-      // Small delay to ensure auth state is fully settled before switching views
-      // This prevents the UI from "flickering" between loading and content states
-      authTimer = setTimeout(() => {
-        setLoading(false);
-      }, 350);
+      setLoading(false);
+    }, (error) => {
+      console.error("Auth Observer Error:", error);
+      setLoading(false);
     });
 
-    return () => {
-      unsubscribe();
-      if (authTimer) clearTimeout(authTimer);
-    };
+    return () => unsubscribe();
   }, []);
 
   const login = async (email: string, password: string) => {
     try {
+      console.log("Attempting Login with Email:", email);
       await signInWithEmailAndPassword(auth, email, password);
+      console.log("Login Success");
       setIsAuthModalOpen(false);
     } catch (error) {
       console.error('Login Error:', error);
@@ -104,8 +99,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const loginWithGoogle = async () => {
     try {
+      console.log("Attempting Google Login...");
       const provider = new GoogleAuthProvider();
-      await signInWithPopup(auth, provider);
+      const result = await signInWithPopup(auth, provider);
+      console.log("Google Login Result:", result.user.email);
       setIsAuthModalOpen(false);
     } catch (error) {
       console.error('Google Sign In Error:', error);

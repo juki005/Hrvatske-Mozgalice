@@ -23,8 +23,10 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }: Au
     setLoading(true);
     try {
       if (mode === 'login') {
+        console.log("Submitting login form...");
         await login(email, password);
       } else {
+        console.log("Submitting registration form...");
         await register(email, password, name);
       }
       setSuccess(true);
@@ -32,9 +34,14 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }: Au
         onClose();
         setSuccess(false);
       }, 1500);
-    } catch (error) {
-      console.error(error);
-      alert('Pojavila se pogreška. Molimo pokušajte ponovno.');
+    } catch (error: any) {
+      console.error("Auth Form Error:", error);
+      const errorMessage = error.code === 'auth/user-not-found' 
+        ? 'Korisnik nije pronađen.' 
+        : error.code === 'auth/wrong-password' 
+        ? 'Pogrešna lozinka.' 
+        : 'Pojavila se pogreška. Molimo pokušajte ponovno.';
+      alert(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -43,6 +50,7 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }: Au
   const handleGoogleLogin = async () => {
     setLoading(true);
     try {
+      console.log("Submitting Google login...");
       await loginWithGoogle();
       setSuccess(true);
       setTimeout(() => {
@@ -50,7 +58,8 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }: Au
         setSuccess(false);
       }, 1500);
     } catch (error) {
-      console.error(error);
+      console.error("Google Login Modal Error:", error);
+      alert('Pogreška pri prijavi s Google računom.');
     } finally {
       setLoading(false);
     }

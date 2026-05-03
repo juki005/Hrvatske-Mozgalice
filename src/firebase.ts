@@ -2,15 +2,20 @@ import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
-// Placeholder config - auth will fail until real keys are provided via settings.
+// Get config from environment variables
 const firebaseConfig = {
-  apiKey: "PLACEHOLDER",
-  authDomain: "PLACEHOLDER",
-  projectId: "PLACEHOLDER",
-  storageBucket: "PLACEHOLDER",
-  messagingSenderId: "PLACEHOLDER",
-  appId: "PLACEHOLDER"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
+
+// Check if keys are missing to provide helpful debugging
+if (!firebaseConfig.apiKey || firebaseConfig.apiKey === 'PLACEHOLDER') {
+  console.warn("Firebase API Key is missing. Please configure it in the AI Studio Settings menu (Secrets).");
+}
 
 const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
 

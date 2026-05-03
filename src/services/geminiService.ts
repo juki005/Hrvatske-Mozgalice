@@ -1,9 +1,28 @@
 import { GoogleGenAI, Type } from "@google/genai";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+let genAI: any = null;
+
+function getGenAI() {
+  if (!genAI) {
+    // Try process.env (AI Studio injects this) or import.meta.env (standard Vite)
+    const apiKey = process.env.GEMINI_API_KEY || (import.meta.env && import.meta.env.VITE_GEMINI_API_KEY);
+    
+    if (!apiKey || apiKey === 'PLACEHOLDER' || apiKey === '') {
+      throw new Error("Gemini API ključ nije pronađen. Molimo postavite GEMINI_API_KEY u Secrets postavkama.");
+    }
+    
+    genAI = new GoogleGenAI(apiKey);
+  }
+  return genAI;
+}
 
 export async function generateGameContent(gameId: string, prompt: string) {
   let responseSchema: any;
+  const ai = getGenAI();
+  const model = ai.getGenerativeModel({ 
+    model: "gemini-1.5-flash",
+    systemInstruction: "You are a helpful assistant that generates content for Croatian brain games and puzzles."
+  });
 
   switch (gameId) {
     case 'zagonetna-osoba':
@@ -38,19 +57,15 @@ export async function generateGameContent(gameId: string, prompt: string) {
       };
       break;
     case 'krizaljka':
-      responseSchema = {
-        type: Type.ARRAY,
-        items: {
-          type: Type.OBJECT,
-          properties: {
-            clue: { type: Type.STRING },
-            answer: { type: Type.STRING },
-            direction: { type: Type.STRING },
-            row: { type: Type.INTEGER },
-            col: { type: Type.INTEGER }
-          },
-          required: ['clue', 'answer', 'direction', 'row', 'col']
-        }
+       responseSchema = {
+        type: Type.OBJECT,
+        properties: {
+          grid: { 
+            type: Type.ARRAY, 
+            items: { type: Type.ARRAY, items: { type: Type.STRING } } 
+          }
+        },
+        required: ['grid']
       };
       break;
     default:
@@ -62,15 +77,14 @@ export async function generateGameContent(gameId: string, prompt: string) {
       };
   }
 
-  const result = await ai.models.generateContent({
-    model: "gemini-3-flash-preview",
-    contents: prompt,
-    config: {
+  const result = await model.generateContent({
+    contents: [{ role: 'user', parts: [{ text: prompt }] }],
+    generationConfig: {
       responseMimeType: "application/json",
       responseSchema: responseSchema,
-      systemInstruction: "You are a helpful assistant that generates content for Croatian brain games and puzzles."
     }
   });
 
-  return JSON.parse(result.text);
+  const responseText = result.response.text();
+  return JSON.parse(responseText);
 }
