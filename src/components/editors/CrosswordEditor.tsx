@@ -1,14 +1,42 @@
 import React, { useState, useMemo } from 'react';
-import { motion } from 'motion/react';
-import { AlertCircle, CheckCircle2, RefreshCw } from 'lucide-react';
+import { AlertCircle, CheckCircle2, RefreshCw, Sparkles, Loader2 } from 'lucide-react';
+import { generateGameContent } from '../../services/geminiService';
+import { useAuth } from '../../context/AuthContext';
 
 type GridSize = 5 | 7 | 12;
 
 export default function CrosswordEditor() {
+  const { user } = useAuth();
   const [size, setSize] = useState<GridSize>(7);
   const [grid, setGrid] = useState<string[][]>(
     Array(7).fill(null).map(() => Array(7).fill(''))
   );
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  if (!user?.isAdmin) {
+    return <div className="p-8 text-center text-red-500 font-bold">Pristup odbijen.</div>;
+  }
+
+  const handleAiGenerate = async () => {
+    setIsGenerating(true);
+    try {
+      const prompt = `Generate a ${size}x${size} crossword grid in Croatian. 
+      Use '.' for black squares and letters for the grid. 
+      The grid must be symmetrical if possible.
+      Format as a JSON object with 'grid' (array of arrays of strings).`;
+      
+      const data = await generateGameContent('krizaljka', prompt);
+      
+      if (data && data.grid && Array.isArray(data.grid)) {
+        setGrid(data.grid);
+      }
+    } catch (error) {
+      console.error("AI Generation Error:", error);
+      alert("Došlo je do pogreške prilikom generiranja.");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
 
   const handleSizeChange = (newSize: GridSize) => {
     setSize(newSize);
@@ -151,7 +179,7 @@ export default function CrosswordEditor() {
     <div className="flex flex-col lg:flex-row gap-8">
       {/* Editor Section */}
       <div className="flex-1">
-        <div className="flex items-center gap-4 mb-6">
+        <div className="flex flex-wrap items-center gap-4 mb-6">
             <select 
               value={size} 
               onChange={(e) => handleSizeChange(Number(e.target.value) as GridSize)}
@@ -167,7 +195,16 @@ export default function CrosswordEditor() {
               className="px-4 py-2 bg-brand-text text-white rounded-lg font-medium hover:bg-black transition-colors flex items-center gap-2"
             >
               <RefreshCw className="w-4 h-4" />
-              Primijeni 180° Simetriju
+              Simetrija
+            </button>
+
+            <button 
+              onClick={handleAiGenerate}
+              disabled={isGenerating}
+              className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg font-bold hover:bg-purple-700 transition-all disabled:opacity-50"
+            >
+              {isGenerating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+              {isGenerating ? 'Generiranje...' : 'AI Grid'}
             </button>
           </div>
 

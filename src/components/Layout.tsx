@@ -117,20 +117,22 @@ const MobileNav = React.memo(({ onProfileClick }: any) => (
   </nav>
 ));
 
-const Footer = React.memo(({ onAdminClick }: any) => (
-  <footer className="flex border-t border-gray-200 py-10 px-4 flex-col items-center justify-center gap-6 bg-brand-card mb-16 sm:mb-0">
-    <div className="flex flex-wrap justify-center gap-8 text-xs font-black uppercase tracking-widest text-brand-muted">
-      <a href="#" className="hover:text-brand-text transition-colors">Arhiva</a>
-      <a href="#" className="hover:text-brand-text transition-colors">Pravila</a>
-      <a href="#" className="hover:text-brand-text transition-colors">O nama</a>
-      <button 
-        onClick={onAdminClick}
-        className="hover:text-brand-text underline decoration-brand-red decoration-2 underline-offset-4 transition-colors"
-      >
-        Admin Editor
-      </button>
+const Footer = React.memo(({ onAdminClick, user }: any) => (
+  <footer className="flex border-t border-gray-200 py-10 px-4 flex-col items-center justify-center gap-6 bg-brand-card mb-16 sm:mb-0 w-full">
+    <div className="flex flex-wrap justify-center items-center gap-x-8 gap-y-4 text-xs font-black uppercase tracking-widest text-brand-muted w-full max-w-2xl mx-auto">
+      <a href="#" className="hover:text-brand-text transition-colors whitespace-nowrap">Arhiva</a>
+      <a href="#" className="hover:text-brand-text transition-colors whitespace-nowrap">Pravila</a>
+      <a href="#" className="hover:text-brand-text transition-colors whitespace-nowrap">O nama</a>
+      {user?.isAdmin && (
+        <button 
+          onClick={onAdminClick}
+          className="hover:text-brand-text underline decoration-brand-red decoration-2 underline-offset-4 transition-colors whitespace-nowrap"
+        >
+          Admin Editor
+        </button>
+      )}
     </div>
-    <div className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">
+    <div className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter text-center">
       © 2026 Hrvatske Mozgalice. Sva prava pridržana.
     </div>
   </footer>
@@ -173,7 +175,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       </main>
 
       <MobileNav onProfileClick={handleProfileClick} />
-      <Footer onAdminClick={handleAdminClick} />
+      <Footer onAdminClick={handleAdminClick} user={user} />
     </div>
   );
 }

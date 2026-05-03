@@ -110,7 +110,7 @@ export default function GameHub({ onSelectGame }: GameHubProps) {
             </div>
           </div>
 
-          {isAdmin && (
+          {user?.isAdmin && (
             <button
               onClick={() => onSelectGame('admin')}
               className="px-6 py-4 bg-gradient-to-tr from-purple-600 to-indigo-600 text-white rounded-2xl font-bold flex items-center gap-2 shadow-lg shadow-purple-200 hover:scale-105 active:scale-95 transition-transform"

@@ -18,6 +18,7 @@ export interface User {
   email: string;
   displayName: string;
   role: UserRole;
+  isAdmin: boolean;
   photoURL?: string;
 }
 
@@ -35,7 +36,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const ADMIN_EMAILS = ['imladinovich@gmail.com', 'admin@mozgalice.hr'];
+const ADMIN_EMAILS = ['imladinovich@gmail.com'];
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -63,13 +64,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (firebaseUser) {
         // Map Firebase User to our App User model
-        const role: UserRole = ADMIN_EMAILS.includes(firebaseUser.email || '') ? 'admin' : 'user';
+        const isAdmin = firebaseUser.email === 'imladinovich@gmail.com';
+        const role: UserRole = isAdmin ? 'admin' : 'user';
+        
         setUser({
           uid: firebaseUser.uid,
           email: firebaseUser.email || '',
           displayName: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'Igrač',
           photoURL: firebaseUser.photoURL || undefined,
-          role
+          role,
+          isAdmin
         });
       } else {
         setUser(null);
